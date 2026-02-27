@@ -1,19 +1,13 @@
 import { GraphQLError } from "graphql"
-import {
-  CreateFormArgs,
-  CreateFormDto,
-  FormArgs,
-  ResponsesArgs,
-  SubmitResponseArgs,
-  SubmitResponseDto,
-} from "../../shared/types"
+import { SubmitResponseDto } from "../../shared/types"
+import { CreateFormDto } from "./../../shared/types"
 import { dataStore } from "./data"
 
 export const resolvers = {
   Query: {
     forms: () => dataStore.getForms(),
 
-    form: (_: any, { id }: FormArgs) => {
+    form: (_: any, { id }: { id: string }) => {
       try {
         const form = dataStore.getForm(id)
         if (!form) {
@@ -31,7 +25,7 @@ export const resolvers = {
       }
     },
 
-    responses: (_: any, { formId }: ResponsesArgs) => {
+    responses: (_: any, { formId }: { formId: string }) => {
       try {
         const form = dataStore.getForm(formId)
         if (!form) {
@@ -51,7 +45,7 @@ export const resolvers = {
   },
 
   Mutation: {
-    createForm: (_: any, args: CreateFormArgs) => {
+    createForm: (_: any, args: CreateFormDto) => {
       try {
         const { title, description, questions } = args
         if (!title || title.trim() === "") {
@@ -60,8 +54,13 @@ export const resolvers = {
           })
         }
 
-        const dto: CreateFormDto = { title, description, questions }
-        return dataStore.createForm(dto)
+        if (!questions || questions.length === 0) {
+          throw new GraphQLError("At least one question is required", {
+            extensions: { code: "VALIDATION_ERROR", field: "questions" },
+          })
+        }
+
+        return dataStore.createForm({ title, description, questions })
       } catch (error) {
         if (error instanceof GraphQLError) throw error
         console.error("Error creating form:", error)
@@ -71,7 +70,7 @@ export const resolvers = {
       }
     },
 
-    submitResponse: (_: any, args: SubmitResponseArgs) => {
+    submitResponse: (_: any, args: SubmitResponseDto) => {
       try {
         const { formId, answers } = args
         const form = dataStore.getForm(formId)
@@ -124,8 +123,7 @@ export const resolvers = {
           }
         }
 
-        const dto: SubmitResponseDto = { formId, answers }
-        return dataStore.submitResponse(dto)
+        return dataStore.submitResponse({ formId, answers })
       } catch (error) {
         if (error instanceof GraphQLError) throw error
         console.error("Error submitting response:", error)

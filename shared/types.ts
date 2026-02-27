@@ -1,12 +1,24 @@
-export type QuestionType = "TEXT" | "MULTIPLE_CHOICE" | "CHECKBOX" | "DATE"
-
-export interface Question {
-  id: string
-  title: string
-  type: QuestionType
-  options?: string[]
-  required: boolean
+export enum QuestionType {
+  TEXT = "TEXT",
+  MULTIPLE_CHOICE = "MULTIPLE_CHOICE",
+  CHECKBOX = "CHECKBOX",
+  DATE = "DATE",
 }
+
+export type Question =
+  | {
+      id: string
+      title: string
+      type: QuestionType.TEXT | QuestionType.DATE
+      required: boolean
+    }
+  | {
+      id: string
+      title: string
+      type: QuestionType.MULTIPLE_CHOICE | QuestionType.CHECKBOX
+      options: string[]
+      required: boolean
+    }
 
 export interface Form {
   id: string
@@ -28,47 +40,27 @@ export interface Response {
   submittedAt: string
 }
 
-// Input types for GraphQL mutations
-export interface QuestionInput {
-  title: string
-  type: QuestionType
-  options?: string[]
-  required: boolean
-}
+export type QuestionInput =
+  | {
+      title: string
+      type: QuestionType.TEXT | QuestionType.DATE
+      required: boolean
+    }
+  | {
+      title: string
+      type: QuestionType.MULTIPLE_CHOICE | QuestionType.CHECKBOX
+      options: string[]
+      required: boolean
+    }
 
-export interface AnswerInput {
-  questionId: string
-  value: string
-}
-
-// DTO interfaces for data store operations
+// DTO interfaces
 export interface CreateFormDto {
   title: string
   description?: string
-  questions?: Partial<Question>[]
+  questions: QuestionInput[]
 }
 
 export interface SubmitResponseDto {
   formId: string
-  answers: { questionId: string; value: string }[]
-}
-
-// Resolver argument DTO interfaces
-export interface FormArgs {
-  id: string
-}
-
-export interface ResponsesArgs {
-  formId: string
-}
-
-export interface CreateFormArgs {
-  title: string
-  description?: string
-  questions?: QuestionInput[]
-}
-
-export interface SubmitResponseArgs {
-  formId: string
-  answers: AnswerInput[]
+  answers: Answer[]
 }

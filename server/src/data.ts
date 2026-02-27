@@ -1,6 +1,7 @@
 import {
   CreateFormDto,
   Form,
+  Question,
   Response,
   SubmitResponseDto,
 } from "../../shared/types"
@@ -31,19 +32,29 @@ export const dataStore = {
         id: nextFormId.toString(),
         title: dto.title,
         description: dto.description,
-        questions: (dto.questions || []).map((q, index) => ({
-          id: nextQuestionId.toString(),
-          title: q.title || "",
-          type: q.type || "TEXT",
-          options: q.options || [],
-          required: q.required || false,
-        })),
+        questions: dto.questions.map(q => {
+          const baseQuestion = {
+            id: nextQuestionId.toString(),
+            title: q.title || "",
+            type: q.type || "TEXT",
+            required: q.required || false,
+          }
+
+          if (q.type === "MULTIPLE_CHOICE" || q.type === "CHECKBOX") {
+            return {
+              ...baseQuestion,
+              options: q.options || [],
+            }
+          }
+
+          return baseQuestion
+        }) as Question[],
         createdAt: new Date().toISOString(),
       }
 
       forms.push(form)
       nextFormId++
-      nextQuestionId += dto.questions?.length || 1
+      nextQuestionId += dto.questions.length || 1
 
       return form
     } catch (error) {

@@ -1,9 +1,9 @@
 import { gql } from "graphql-request"
 import type {
-  CreateFormArgs,
+  CreateFormDto,
   Form,
   Response,
-  SubmitResponseArgs,
+  SubmitResponseDto,
 } from "../../../shared/types"
 import { api } from "./baseApi"
 
@@ -56,7 +56,7 @@ const formApiSlice = api
           `,
         }),
       }),
-      getForm: builder.query<GetFormResponse, { id: Form["id"] }>({
+      getForm: builder.query<GetFormResponse, { id: string }>({
         providesTags: (_result, _error, { id }) => [{ type: "Form", id }],
         query: ({ id }) => ({
           document: gql`
@@ -79,30 +79,28 @@ const formApiSlice = api
           variables: { id },
         }),
       }),
-      getResponses: builder.query<GetResponsesResponse, { formId: Form["id"] }>(
-        {
-          providesTags: (_result, _error, { formId }) => [
-            { type: "Responses", id: formId },
-          ],
-          query: ({ formId }) => ({
-            document: gql`
-              query GetResponses($formId: ID!) {
-                responses(formId: $formId) {
-                  id
-                  formId
-                  answers {
-                    questionId
-                    value
-                  }
-                  submittedAt
+      getResponses: builder.query<GetResponsesResponse, { formId: string }>({
+        providesTags: (_result, _error, { formId }) => [
+          { type: "Responses", id: formId },
+        ],
+        query: ({ formId }) => ({
+          document: gql`
+            query GetResponses($formId: ID!) {
+              responses(formId: $formId) {
+                id
+                formId
+                answers {
+                  questionId
+                  value
                 }
+                submittedAt
               }
-            `,
-            variables: { formId },
-          }),
-        }
-      ),
-      createForm: builder.mutation<CreateFormResponse, CreateFormArgs>({
+            }
+          `,
+          variables: { formId },
+        }),
+      }),
+      createForm: builder.mutation<CreateFormResponse, CreateFormDto>({
         invalidatesTags: ["Forms"],
         query: ({ title, description, questions }) => ({
           document: gql`
@@ -135,7 +133,7 @@ const formApiSlice = api
       }),
       submitResponse: builder.mutation<
         SubmitResponseResponse,
-        SubmitResponseArgs
+        SubmitResponseDto
       >({
         invalidatesTags: (_result, _error, { formId }) => [
           { type: "Responses", id: formId },
