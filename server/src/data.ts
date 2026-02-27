@@ -1,7 +1,6 @@
 import {
   CreateFormDto,
   Form,
-  QuestionType,
   Response,
   SubmitResponseDto,
 } from "../../shared/types"
@@ -17,49 +16,71 @@ export const dataStore = {
   // Forms
   getForms: (): Form[] => forms,
 
-  getForm: (id: Form["id"]): Form | undefined =>
-    forms.find(form => form.id === id),
+  getForm: (id: Form["id"]): Form | undefined => {
+    try {
+      return forms.find(form => form.id === id)
+    } catch (error) {
+      console.error(`Error fetching form ${id}:`, error)
+      throw new Error(`Failed to fetch form ${id}`)
+    }
+  },
 
   createForm: (dto: CreateFormDto): Form => {
-    const form: Form = {
-      id: nextFormId.toString(),
-      title: dto.title,
-      description: dto.description,
-      questions: (dto.questions || []).map((q, index) => ({
-        id: nextQuestionId.toString(),
-        title: q.title || "",
-        type: q.type || QuestionType.TEXT,
-        options: q.options || [],
-        required: q.required || false,
-      })),
-      createdAt: new Date().toISOString(),
+    try {
+      const form: Form = {
+        id: nextFormId.toString(),
+        title: dto.title,
+        description: dto.description,
+        questions: (dto.questions || []).map((q, index) => ({
+          id: nextQuestionId.toString(),
+          title: q.title || "",
+          type: q.type || "TEXT",
+          options: q.options || [],
+          required: q.required || false,
+        })),
+        createdAt: new Date().toISOString(),
+      }
+
+      forms.push(form)
+      nextFormId++
+      nextQuestionId += dto.questions?.length || 1
+
+      return form
+    } catch (error) {
+      console.error("Error creating form:", error)
+      throw new Error("Failed to create form")
     }
-
-    forms.push(form)
-    nextFormId++
-    nextQuestionId += dto.questions?.length || 1
-
-    return form
   },
 
   // Responses
-  getResponses: (formId: Form["id"]): Response[] =>
-    responses.filter(response => response.formId === formId),
+  getResponses: (formId: Form["id"]): Response[] => {
+    try {
+      return responses.filter(response => response.formId === formId)
+    } catch (error) {
+      console.error(`Error fetching responses for form ${formId}:`, error)
+      throw new Error(`Failed to fetch responses for form ${formId}`)
+    }
+  },
 
   submitResponse: (dto: SubmitResponseDto): Response => {
-    const response: Response = {
-      id: nextResponseId.toString(),
-      formId: dto.formId,
-      answers: dto.answers.map(answer => ({
-        questionId: answer.questionId,
-        value: answer.value,
-      })),
-      submittedAt: new Date().toISOString(),
+    try {
+      const response: Response = {
+        id: nextResponseId.toString(),
+        formId: dto.formId,
+        answers: dto.answers.map(answer => ({
+          questionId: answer.questionId,
+          value: answer.value,
+        })),
+        submittedAt: new Date().toISOString(),
+      }
+
+      responses.push(response)
+      nextResponseId++
+
+      return response
+    } catch (error) {
+      console.error("Error submitting response:", error)
+      throw new Error("Failed to submit response")
     }
-
-    responses.push(response)
-    nextResponseId++
-
-    return response
   },
 }

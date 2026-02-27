@@ -1,14 +1,9 @@
-export const QuestionType = {
-  TEXT: "TEXT",
-  MULTIPLE_CHOICE: "MULTIPLE_CHOICE",
-  CHECKBOX: "CHECKBOX",
-  DATE: "DATE",
-} as const
+export type QuestionType = "TEXT" | "MULTIPLE_CHOICE" | "CHECKBOX" | "DATE"
 
 export interface Question {
   id: string
   title: string
-  type: typeof QuestionType
+  type: QuestionType
   options?: string[]
   required: boolean
 }
@@ -36,7 +31,7 @@ export interface Response {
 // Input types for GraphQL mutations
 export interface QuestionInput {
   title: string
-  type: typeof QuestionType
+  type: QuestionType
   options?: string[]
   required: boolean
 }
