@@ -1,10 +1,10 @@
 import { Plus } from "lucide-react"
-import { Link } from "react-router-dom"
 import { useGetFormsQuery } from "../api/formApiSlice"
-import ErrorAlert from "../components/ErrorAlert"
 import FormItem from "../components/FormItem"
-import Loading from "../components/Loading"
-import Wrapper from "../components/Wrapper"
+import Button from "../components/UI/Button"
+import ErrorAlert from "../components/UI/ErrorAlert"
+import Loading from "../components/UI/Loading"
+import Wrapper from "../components/UI/Wrapper"
 
 const Homepage = () => {
   const { data, isLoading, error } = useGetFormsQuery()
@@ -38,13 +38,10 @@ const Homepage = () => {
     <Wrapper>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Forms</h1>
-        <Link
-          to="/forms/new"
-          className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
-        >
+        <Button to="/forms/new">
           <Plus size={20} />
           Create New Form
-        </Link>
+        </Button>
       </div>
       {content}
     </Wrapper>

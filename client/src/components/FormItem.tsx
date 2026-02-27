@@ -1,5 +1,5 @@
 import { Eye, FileText } from "lucide-react"
-import { Link } from "react-router-dom"
+import Button from "./UI/Button"
 
 interface FormItemProps {
   id: string
@@ -21,20 +21,17 @@ const FormItem: React.FC<FormItemProps> = ({ id, title, description }) => {
         </div>
       </div>
       <div className="flex gap-3">
-        <Link
-          to={`/forms/${id}/fill`}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-        >
+        <Button to={`/forms/${id}/fill`}>
           <Eye size={16} />
           View Form
-        </Link>
-        <Link
+        </Button>
+        <Button
           to={`/forms/${id}/responses`}
-          className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+          variant="secondary"
         >
           <FileText size={16} />
           View Responses
-        </Link>
+        </Button>
       </div>
     </div>
   )
