@@ -1,14 +1,14 @@
-export enum QuestionType {
-  TEXT = "TEXT",
-  MULTIPLE_CHOICE = "MULTIPLE_CHOICE",
-  CHECKBOX = "CHECKBOX",
-  DATE = "DATE",
-}
+export const QuestionType = {
+  TEXT: "TEXT",
+  MULTIPLE_CHOICE: "MULTIPLE_CHOICE",
+  CHECKBOX: "CHECKBOX",
+  DATE: "DATE",
+} as const
 
 export interface Question {
   id: string
   title: string
-  type: QuestionType
+  type: typeof QuestionType
   options?: string[]
   required: boolean
 }
@@ -36,7 +36,7 @@ export interface Response {
 // Input types for GraphQL mutations
 export interface QuestionInput {
   title: string
-  type: QuestionType
+  type: typeof QuestionType
   options?: string[]
   required: boolean
 }
@@ -60,11 +60,11 @@ export interface SubmitResponseDto {
 
 // Resolver argument DTO interfaces
 export interface FormArgs {
-  id: Form["id"]
+  id: string
 }
 
 export interface ResponsesArgs {
-  formId: Form["id"]
+  formId: string
 }
 
 export interface CreateFormArgs {
