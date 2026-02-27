@@ -1,13 +1,17 @@
 import { Eye, FileText } from "lucide-react"
 import Button from "./UI/Button"
 
-interface FormItemProps {
+interface FormPreviewProps {
   id: string
   title: string
   description?: string
 }
 
-const FormItem: React.FC<FormItemProps> = ({ id, title, description }) => {
+const FormPreview: React.FC<FormPreviewProps> = ({
+  id,
+  title,
+  description,
+}) => {
   return (
     <div className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm">
       <div className="flex items-start gap-3 mb-3">
@@ -37,4 +41,4 @@ const FormItem: React.FC<FormItemProps> = ({ id, title, description }) => {
   )
 }
 
-export default FormItem
+export default FormPreview

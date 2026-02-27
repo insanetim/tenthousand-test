@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react"
 import { useGetFormsQuery } from "../api/formApiSlice"
-import FormItem from "../components/FormItem"
+import FormPreview from "../components/FormPreview"
 import Button from "../components/UI/Button"
 import ErrorAlert from "../components/UI/ErrorAlert"
 import Loading from "../components/UI/Loading"
@@ -23,7 +23,7 @@ const Homepage = () => {
     content = (
       <div className="space-y-4">
         {data?.forms.map(form => (
-          <FormItem
+          <FormPreview
             key={form.id}
             id={form.id}
             title={form.title}

@@ -1,43 +1,93 @@
-import { nanoid } from "@reduxjs/toolkit"
 import { Plus, Trash2 } from "lucide-react"
-import { useState } from "react"
+import { nanoid } from "nanoid"
+import React, { useMemo, useState } from "react"
+import type { CreateFormDto } from "../../../shared/types"
+import { QuestionType } from "../../../shared/types"
+import QuestionConstructor from "../components/QuestionConstructor"
 import SortableList from "../components/SortableList/SortableList"
 import SortableListItem from "../components/SortableList/SortableListItem"
 import Button from "../components/UI/Button"
 import ErrorAlert from "../components/UI/ErrorAlert"
 import FormField from "../components/UI/FormField"
 import Wrapper from "../components/UI/Wrapper"
-
-type Question = {
-  id: string
-  text: string
-}
+import {
+  formatValidationErrors,
+  validateCreateForm,
+} from "../services/validation"
+import type { QuestionWithId } from "../types"
 
 const CreateForm = () => {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [errors, setErrors] = useState<string[]>([])
-  const [questions, setQuestions] = useState<Question[]>([])
+  const [questions, setQuestions] = useState<QuestionWithId[]>([])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validationErrors = useMemo(() => {
+    if (errors.length === 0) return []
+
+    const formData: CreateFormDto = {
+      title: title.trim(),
+      description: description.trim() || undefined,
+      questions: questions.map(({ title, type, options, required }) => ({
+        title,
+        type,
+        options,
+        required,
+      })),
+    }
+    return formatValidationErrors(validateCreateForm(formData))
+  }, [title, description, questions, errors.length])
+
+  const addNewQuestion = () => {
+    const newQuestion: QuestionWithId = {
+      id: nanoid(),
+      title: `Question ${questions.length + 1}`,
+      type: QuestionType.TEXT,
+      required: false,
+    }
+    const newQuestions = [...questions, newQuestion]
+    setQuestions(newQuestions)
+  }
+
+  const updateQuestion = (id: string, updatedQuestion: QuestionWithId) => {
+    const newQuestions = questions.map(q =>
+      q.id === id ? { ...q, ...updatedQuestion } : q
+    )
+    setQuestions(newQuestions)
+  }
+
+  const removeQuestion = (id: string) => {
+    const newQuestions = questions.filter(q => q.id !== id)
+    setQuestions(newQuestions)
+  }
+
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const newErrors: string[] = []
-
-    // Basic validation
-    if (!title.trim()) {
-      newErrors.push("Form title is required")
+    // Prepare form data for validation
+    const formData: CreateFormDto = {
+      title: title.trim(),
+      description: description.trim() || undefined,
+      questions: questions.map(({ title, type, options, required }) => ({
+        title,
+        type,
+        options,
+        required,
+      })),
     }
 
-    if (newErrors.length > 0) {
-      setErrors(newErrors)
+    // Validate form
+    const validationErrors = validateCreateForm(formData)
+
+    if (validationErrors.length > 0) {
+      setErrors(formatValidationErrors(validationErrors))
       return
     }
 
     setErrors([])
 
     // TODO: Submit form to server
-    console.log("Form submitted:", { title, description })
+    console.log("Form submitted:", formData)
 
     // Reset form
     setTitle("")
@@ -45,35 +95,12 @@ const CreateForm = () => {
     setQuestions([])
   }
 
-  const addNewQuestion = () => {
-    const newQuestion: Question = {
-      id: nanoid(),
-      text: `Question ${questions.length + 1}`,
-    }
-    setQuestions([...questions, newQuestion])
-  }
-
-  const updateQuestion = (id: string, text: string) => {
-    setQuestions(questions.map(q => (q.id === id ? { ...q, text } : q)))
-  }
-
-  const removeQuestion = (id: string) => {
-    setQuestions(questions.filter(q => q.id !== id))
-  }
-
-  const handleTitleChange = (value: string) => {
-    setTitle(value)
-    if (errors.length > 0) {
-      setErrors([])
-    }
-  }
-
   return (
     <Wrapper>
       <h1 className="text-2xl font-bold text-gray-800 mb-4">Create New Form</h1>
-      {errors.length > 0 && (
+      {validationErrors.length > 0 && (
         <div className="mb-4">
-          <ErrorAlert errorMessage={errors} />
+          <ErrorAlert errorMessage={validationErrors} />
         </div>
       )}
       <form
@@ -85,12 +112,13 @@ const CreateForm = () => {
             htmlFor="title"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Title *
+            Title*
           </label>
           <FormField
+            id="title"
             value={title}
-            onChange={handleTitleChange}
-            hasError={errors.some(error => error.includes("title"))}
+            onChange={setTitle}
+            hasError={validationErrors.some(error => error.includes("title"))}
             placeholder="Enter form title"
           />
         </div>
@@ -103,6 +131,7 @@ const CreateForm = () => {
             Description
           </label>
           <FormField
+            id="description"
             value={description}
             onChange={setDescription}
             placeholder="Enter form description (optional)"
@@ -115,7 +144,7 @@ const CreateForm = () => {
             <Button
               type="button"
               onClick={addNewQuestion}
-              className="flex items-center gap-2"
+              variant="outlined"
             >
               <Plus className="w-4 h-4" />
               Add Question
@@ -130,16 +159,17 @@ const CreateForm = () => {
               {questions.map(question => (
                 <SortableListItem key={question.id}>
                   <div className="flex-1">
-                    <FormField
-                      value={question.text}
-                      onChange={value => updateQuestion(question.id, value)}
-                      placeholder="Enter question text"
+                    <QuestionConstructor
+                      questionData={question}
+                      onChange={updatedQuestion =>
+                        updateQuestion(question.id, updatedQuestion)
+                      }
                     />
                   </div>
                   <Button
                     type="button"
                     onClick={() => removeQuestion(question.id)}
-                    className="ml-2 p-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="ml-2 p-2 hover:text-red-700 hover:bg-red-50"
                     variant="secondary"
                   >
                     <Trash2 className="w-4 h-4" />

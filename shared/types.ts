@@ -5,20 +5,13 @@ export enum QuestionType {
   DATE = "DATE",
 }
 
-export type Question =
-  | {
-      id: string
-      title: string
-      type: QuestionType.TEXT | QuestionType.DATE
-      required: boolean
-    }
-  | {
-      id: string
-      title: string
-      type: QuestionType.MULTIPLE_CHOICE | QuestionType.CHECKBOX
-      options: string[]
-      required: boolean
-    }
+export interface Question {
+  id: string
+  title: string
+  type: QuestionType
+  options?: string[]
+  required: boolean
+}
 
 export interface Form {
   id: string
@@ -40,18 +33,7 @@ export interface Response {
   submittedAt: string
 }
 
-export type QuestionInput =
-  | {
-      title: string
-      type: QuestionType.TEXT | QuestionType.DATE
-      required: boolean
-    }
-  | {
-      title: string
-      type: QuestionType.MULTIPLE_CHOICE | QuestionType.CHECKBOX
-      options: string[]
-      required: boolean
-    }
+export type QuestionInput = Omit<Question, "id">
 
 // DTO interfaces
 export interface CreateFormDto {

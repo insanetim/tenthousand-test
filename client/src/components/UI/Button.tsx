@@ -1,11 +1,12 @@
 import React from "react"
 import { Link } from "react-router"
+import { twMerge } from "tailwind-merge"
 
 interface ButtonProps {
   children: React.ReactNode
   onClick?: () => void
   type?: "button" | "submit" | "reset"
-  variant?: "primary" | "secondary" | "danger"
+  variant?: "primary" | "secondary" | "danger" | "outlined"
   disabled?: boolean
   className?: string
   to?: string
@@ -28,6 +29,8 @@ const Button: React.FC<ButtonProps> = ({
         return "bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500"
       case "danger":
         return "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500"
+      case "outlined":
+        return "border-2 border-blue-600 text-blue-600 bg-transparent hover:bg-blue-50 focus:ring-blue-500"
       default:
         return "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"
     }
@@ -39,13 +42,13 @@ const Button: React.FC<ButtonProps> = ({
   const disabledClasses = disabled ? "opacity-50 cursor-not-allowed" : ""
   const variantClasses = getVariantClasses()
 
-  const classes = `
-    ${baseClasses}
-    ${widthClasses}
-    ${variantClasses}
-    ${disabledClasses}
-    ${className}
-  `.trim()
+  const classes = twMerge(
+    baseClasses,
+    widthClasses,
+    disabledClasses,
+    variantClasses,
+    className
+  )
 
   const sharedProps = {
     className: classes,
@@ -57,9 +60,7 @@ const Button: React.FC<ButtonProps> = ({
       <Link
         to={to}
         {...sharedProps}
-      >
-        {children}
-      </Link>
+      />
     )
   }
 
