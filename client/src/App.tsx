@@ -1,8 +1,39 @@
+import { lazy, Suspense } from "react"
+import { Route, Routes } from "react-router"
+
+const DefaultLayout = lazy(() => import("./layouts/Default"))
+const Homepage = lazy(() => import("./pages/Homepage"))
+const CreateForm = lazy(() => import("./pages/CreateForm"))
+const FillForm = lazy(() => import("./pages/FillForm"))
+const Responses = lazy(() => import("./pages/Responses"))
+
 function App() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-4xl font-bold">Home page</h1>
-    </div>
+    <Suspense fallback={null}>
+      <Routes>
+        <Route
+          path="/"
+          element={<DefaultLayout />}
+        >
+          <Route
+            index
+            element={<Homepage />}
+          />
+          <Route
+            path="forms/new"
+            element={<CreateForm />}
+          />
+          <Route
+            path="forms/:id/fill"
+            element={<FillForm />}
+          />
+          <Route
+            path="forms/:id/responses"
+            element={<Responses />}
+          />
+        </Route>
+      </Routes>
+    </Suspense>
   )
 }
 
