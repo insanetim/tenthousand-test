@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react"
 import { Route, Routes } from "react-router"
 
-const DefaultLayout = lazy(() => import("./layouts/Default"))
+const DefaultLayout = lazy(() => import("./layouts/DefaultLayout"))
 const Homepage = lazy(() => import("./pages/Homepage"))
 const CreateForm = lazy(() => import("./pages/CreateForm"))
 const FillForm = lazy(() => import("./pages/FillForm"))
