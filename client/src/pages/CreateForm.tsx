@@ -177,7 +177,7 @@ const CreateForm = () => {
                 >
                   <QuestionConstructor
                     questionData={question}
-                    onChange={updatedQuestion =>
+                    onQuestionUpdate={updatedQuestion =>
                       updateQuestion(question.id, updatedQuestion)
                     }
                   />

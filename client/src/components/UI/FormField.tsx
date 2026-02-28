@@ -9,6 +9,7 @@ interface FormFieldProps {
   type?: "text" | "date"
   id?: string
   labelText?: string
+  className?: string
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -19,13 +20,18 @@ const FormField: React.FC<FormFieldProps> = ({
   type = "text",
   id,
   labelText,
+  className = "",
 }) => {
   const baseClasses =
     "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
   const errorClasses = "border-red-500 focus:ring-red-500"
   const normalClasses = "border-gray-300"
 
-  const classes = twMerge(baseClasses, hasError ? errorClasses : normalClasses)
+  const classes = twMerge(
+    baseClasses,
+    hasError ? errorClasses : normalClasses,
+    className
+  )
 
   return (
     <>
@@ -41,8 +47,8 @@ const FormField: React.FC<FormFieldProps> = ({
         id={id}
         type={type}
         value={value}
-        placeholder={placeholder}
         className={classes}
+        placeholder={placeholder}
         aria-invalid={hasError}
         onChange={onChange}
       />

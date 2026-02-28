@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge"
 
 interface CheckboxProps {
   checked: boolean
-  onChange: (checked: boolean) => void
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   label?: string
   disabled?: boolean
   className?: string
@@ -24,9 +24,6 @@ const Checkbox: React.FC<CheckboxProps> = ({
   )
 
   const checkboxId = id || generatedId
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.checked)
-  }
 
   const checkboxClasses = twMerge(
     "w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:ring-offset-2 transition-colors",
@@ -45,7 +42,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
         type="checkbox"
         id={checkboxId}
         checked={checked}
-        onChange={handleChange}
+        onChange={onChange}
         disabled={disabled}
         className={checkboxClasses}
       />

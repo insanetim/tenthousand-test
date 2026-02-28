@@ -1,4 +1,5 @@
 import React from "react"
+import { twMerge } from "tailwind-merge"
 
 interface SelectOption {
   value: string
@@ -8,53 +9,64 @@ interface SelectOption {
 interface SelectProps {
   options: SelectOption[]
   value?: string
-  onChange?: (value: string) => void
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void
   placeholder?: string
   className?: string
   id?: string
   disabled?: boolean
+  labelText?: string
 }
 
 const Select = ({
   options,
   value,
   onChange,
-  placeholder = "Select an option",
+  placeholder,
   className = "",
   id,
   disabled = false,
+  labelText,
 }: SelectProps) => {
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (onChange) {
-      onChange(e.target.value)
-    }
-  }
+  const baseClasses =
+    "w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+
+  const classes = twMerge(baseClasses, className)
 
   return (
-    <select
-      id={id}
-      value={value || ""}
-      onChange={handleChange}
-      disabled={disabled}
-      className={`w-full px-3 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed ${className}`}
-    >
-      {placeholder && (
-        <option
-          value=""
-          disabled
+    <>
+      {labelText && (
+        <label
+          className="block text-sm font-medium text-gray-700 mb-1"
+          htmlFor={id}
         >
-          {placeholder}
-        </option>
+          {labelText}
+        </label>
       )}
-      {options.map(option => (
-        <option
-          key={option.value}
-          value={option.value}
-        >
-          {option.label}
-        </option>
-      ))}
-    </select>
+      <select
+        id={id}
+        value={value}
+        className={classes}
+        disabled={disabled}
+        onChange={onChange}
+      >
+        {placeholder && (
+          <option
+            value=""
+            disabled
+          >
+            {placeholder}
+          </option>
+        )}
+        {options.map(option => (
+          <option
+            key={option.value}
+            value={option.value}
+          >
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </>
   )
 }
 

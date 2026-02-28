@@ -1,59 +1,45 @@
 import React from "react"
 import { QuestionType } from "../../../shared/types"
 import type { QuestionWithId } from "../types"
+import Checkbox from "./UI/Checkbox"
 import FormField from "./UI/FormField"
 import Select from "./UI/Select"
 
 interface QuestionConstructorProps {
   questionData: QuestionWithId
-  onChange: (questionData: QuestionWithId) => void
+  onQuestionUpdate: (question: QuestionWithId) => void
 }
+
+const TYPE_OPTIONS = [
+  { value: QuestionType.TEXT, label: "Text" },
+  { value: QuestionType.MULTIPLE_CHOICE, label: "Multiple Choice" },
+  { value: QuestionType.CHECKBOX, label: "Checkbox" },
+  { value: QuestionType.DATE, label: "Date" },
+]
 
 const QuestionConstructor = ({
   questionData,
-  onChange,
+  onQuestionUpdate,
 }: QuestionConstructorProps) => {
-  const questionTypeOptions = [
-    { value: QuestionType.TEXT, label: "Text" },
-    { value: QuestionType.MULTIPLE_CHOICE, label: "Multiple Choice" },
-    { value: QuestionType.CHECKBOX, label: "Checkbox" },
-    { value: QuestionType.DATE, label: "Date" },
-  ]
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onQuestionUpdate({
+      ...questionData,
+      title: e.target.value,
+    })
+  }
 
-  const handleTypeChange = (value: string) => {
-    const newType = value as QuestionType
-    const baseData = {
-      id: questionData.id,
-      title: questionData.title,
-      required: questionData.required,
-    }
-
-    if (
-      newType === QuestionType.MULTIPLE_CHOICE ||
-      newType === QuestionType.CHECKBOX
-    ) {
-      const newQuestionData = {
-        ...baseData,
-        type: newType,
-        options: [],
-      } as QuestionWithId
-
-      onChange(newQuestionData)
-    } else {
-      const newQuestionData = {
-        ...baseData,
-        type: newType,
-      } as QuestionWithId
-
-      onChange(newQuestionData)
-    }
+  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onQuestionUpdate({
+      ...questionData,
+      type: e.target.value as QuestionType,
+      options: [],
+    })
   }
 
   const handleRequiredChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newRequired = e.target.checked
-    onChange({
+    onQuestionUpdate({
       ...questionData,
-      required: newRequired,
+      required: e.target.checked,
     })
   }
 
@@ -67,7 +53,7 @@ const QuestionConstructor = ({
         options: [...(questionData.options || []), ""],
       }
 
-      onChange(newQuestionData)
+      onQuestionUpdate(newQuestionData)
     }
   }
 
@@ -81,7 +67,7 @@ const QuestionConstructor = ({
         options: questionData.options?.filter((_, i) => i !== index) || [],
       }
 
-      onChange(newQuestionData)
+      onQuestionUpdate(newQuestionData)
     }
   }
 
@@ -97,7 +83,7 @@ const QuestionConstructor = ({
         options: newOptions,
       }
 
-      onChange(newQuestionData)
+      onQuestionUpdate(newQuestionData)
     }
   }
 
@@ -107,54 +93,35 @@ const QuestionConstructor = ({
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Title Field */}
           <div className="md:col-span-2">
-            <label
-              htmlFor={`q-${questionData.id}-title`}
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Question Title
-            </label>
             <FormField
               id={`q-${questionData.id}-title`}
               value={questionData.title}
-              onChange={newTitle =>
-                onChange({ ...questionData, title: newTitle })
-              }
+              onChange={handleTitleChange}
               placeholder="Enter question"
+              labelText="Question Title"
             />
           </div>
 
           {/* Type Select */}
           <div>
-            <label
-              htmlFor={`q-${questionData.id}-type`}
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Type
-            </label>
             <Select
               id={`q-${questionData.id}-type`}
-              options={questionTypeOptions}
+              options={TYPE_OPTIONS}
               value={questionData.type}
               onChange={handleTypeChange}
+              labelText="Type"
             />
           </div>
 
           {/* Required Checkbox */}
           <div className="flex items-end">
             <div className="flex items-center">
-              <input
-                type="checkbox"
+              <Checkbox
                 id="required"
+                label="Required"
                 checked={questionData.required}
                 onChange={handleRequiredChange}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <label
-                htmlFor="required"
-                className="ml-2 text-sm font-medium text-gray-700"
-              >
-                Required
-              </label>
             </div>
           </div>
         </div>
@@ -183,7 +150,7 @@ const QuestionConstructor = ({
               >
                 <FormField
                   value={option}
-                  onChange={value => updateOption(index, value)}
+                  onChange={e => updateOption(index, e.target.value)}
                   placeholder={`Option ${index + 1}`}
                 />
                 {(questionData.options || []).length > 1 && (
