@@ -3,6 +3,7 @@ import { nanoid } from "nanoid"
 import React, { useMemo, useState } from "react"
 import type { CreateFormDto } from "../../../shared/types"
 import { QuestionType } from "../../../shared/types"
+import { useCreateFormMutation } from "../api/formApiSlice"
 import QuestionConstructor from "../components/QuestionConstructor"
 import SortableList from "../components/SortableList"
 import Button from "../components/UI/Button"
@@ -22,6 +23,9 @@ interface FormData {
 }
 
 const CreateForm = () => {
+  const [createForm, { isLoading, error: submitError }] =
+    useCreateFormMutation()
+
   const [formData, setFormData] = useState<FormData>({
     title: "",
     description: "",
@@ -47,6 +51,14 @@ const CreateForm = () => {
 
     return formatValidationErrors(validateCreateForm(data))
   }, [hasErrors, formData])
+
+  const errorMessage = useMemo(() => {
+    if (submitError) {
+      return submitError.message
+    } else if (validationErrors.length > 0) {
+      return validationErrors
+    }
+  }, [submitError, validationErrors])
 
   const updateFormData = <T extends keyof FormData>(
     key: T,
@@ -82,7 +94,7 @@ const CreateForm = () => {
     updateFormData("questions", questions)
   }
 
-  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     // Prepare form data for validation
@@ -109,23 +121,26 @@ const CreateForm = () => {
 
     setHasErrors(false)
 
-    // TODO: Submit form to server
-    console.log("Form submitted:", data)
+    try {
+      await createForm(data).unwrap()
 
-    // Reset form
-    setFormData({
-      title: "",
-      description: "",
-      questions: [],
-    })
+      // Reset form
+      setFormData({
+        title: "",
+        description: "",
+        questions: [],
+      })
+    } catch (error) {
+      console.error("Error creating form:", error)
+    }
   }
 
   return (
     <Wrapper>
       <h1 className="text-2xl font-bold text-gray-800 mb-4">Create New Form</h1>
-      {validationErrors.length > 0 && (
+      {errorMessage && (
         <div className="mb-4">
-          <ErrorAlert errorMessage={validationErrors} />
+          <ErrorAlert errorMessage={errorMessage} />
         </div>
       )}
       <form
@@ -195,6 +210,7 @@ const CreateForm = () => {
           <Button
             type="submit"
             fullWidth
+            disabled={isLoading}
           >
             Create Form
           </Button>
