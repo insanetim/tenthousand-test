@@ -1,5 +1,5 @@
 import { Eye, FileText } from "lucide-react"
-import { formatDate } from "../utils/formatDate"
+import { formatDateWithTime } from "../services/format"
 import Button from "./UI/Button"
 
 interface FormPreviewProps {
@@ -25,7 +25,9 @@ const FormPreview: React.FC<FormPreviewProps> = ({
         <div className="flex-1">
           <h3 className="text-lg font-semibold mb-2">{title}</h3>
           {description && <p className="text-gray-600 mb-2">{description}</p>}
-          <p className="text-sm text-gray-500 mb-4">{formatDate(createdAt)}</p>
+          <p className="text-sm text-gray-500 mb-4">
+            {formatDateWithTime(createdAt)}
+          </p>
         </div>
       </div>
       <div className="flex gap-3">

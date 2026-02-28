@@ -23,7 +23,7 @@ export interface Form {
 
 export interface Answer {
   questionId: string
-  value: string
+  value: string | string[]
 }
 
 export interface Response {
