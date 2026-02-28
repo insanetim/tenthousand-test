@@ -83,14 +83,16 @@ export const resolvers = {
         // Validate that all required questions are answered
         for (const question of form.questions) {
           if (question.required) {
-            const hasAnswer = answers.some(
-              answer => answer.questionId === question.id
-            )
-            if (
-              !hasAnswer ||
-              answers.find(a => a.questionId === question.id)?.value.trim() ===
-                ""
-            ) {
+            const answer = answers.find(a => a.questionId === question.id)
+            const hasAnswer = !!answer
+
+            const isEmpty =
+              !answer?.value ||
+              (typeof answer.value === "string"
+                ? answer.value.trim() === ""
+                : answer.value.length === 0)
+
+            if (!hasAnswer || isEmpty) {
               throw new GraphQLError(
                 `Required question "${question.title}" must be answered`,
                 {
