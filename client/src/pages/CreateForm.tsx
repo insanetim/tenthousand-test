@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react"
 import { nanoid } from "nanoid"
 import React, { useMemo, useState } from "react"
+import { useNavigate } from "react-router"
 import type { CreateFormDto } from "../../../shared/types"
 import { QuestionType } from "../../../shared/types"
 import { useCreateFormMutation } from "../api/formApiSlice"
@@ -30,6 +31,7 @@ const initialFormData: FormData = {
 }
 
 const CreateForm = () => {
+  const navigate = useNavigate()
   const [createForm, { isLoading, error: submitError }] =
     useCreateFormMutation()
 
@@ -131,6 +133,8 @@ const CreateForm = () => {
 
       // Reset form
       setFormData(initialFormData)
+
+      navigate("/")
     } catch (error) {
       console.error("Error creating form:", error)
       showToast.error("Failed to create form")

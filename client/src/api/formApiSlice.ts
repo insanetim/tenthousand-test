@@ -55,8 +55,14 @@ const formApiSlice = api
             }
           `,
         }),
+        transformResponse: (response: GetFormsResponse) => ({
+          forms: [...response.forms].sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          ),
+        }),
       }),
-      getForm: builder.query<GetFormResponse, { id: string }>({
+      getForm: builder.query<Form, { id: string }>({
         providesTags: (_result, _error, { id }) => [{ type: "Form", id }],
         query: ({ id }) => ({
           document: gql`
@@ -78,6 +84,7 @@ const formApiSlice = api
           `,
           variables: { id },
         }),
+        transformResponse: (response: GetFormResponse) => response.form,
       }),
       getResponses: builder.query<GetResponsesResponse, { formId: string }>({
         providesTags: (_result, _error, { formId }) => [
@@ -98,6 +105,13 @@ const formApiSlice = api
             }
           `,
           variables: { formId },
+        }),
+        transformResponse: (response: GetResponsesResponse) => ({
+          responses: [...response.responses].sort(
+            (a, b) =>
+              new Date(b.submittedAt).getTime() -
+              new Date(a.submittedAt).getTime()
+          ),
         }),
       }),
       createForm: builder.mutation<CreateFormResponse, CreateFormDto>({
