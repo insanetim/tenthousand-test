@@ -26,8 +26,10 @@ export const typeDefs = gql`
 
   type Answer {
     questionId: ID!
-    value: String! # For TEXT, DATE, and selected option(s)
+    value: StringOrStrings! # For TEXT, DATE (String) and CHECKBOX ([String])
   }
+
+  scalar StringOrStrings
 
   type Response {
     id: ID!
@@ -45,7 +47,7 @@ export const typeDefs = gql`
 
   input AnswerInput {
     questionId: ID!
-    value: String!
+    value: StringOrStrings!
   }
 
   type Query {
