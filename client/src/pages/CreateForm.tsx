@@ -10,6 +10,7 @@ import Button from "../components/UI/Button"
 import ErrorAlert from "../components/UI/ErrorAlert"
 import FormField from "../components/UI/FormField"
 import Wrapper from "../components/UI/Wrapper"
+import showToast from "../services/toast"
 import {
   formatValidationErrors,
   validateCreateForm,
@@ -22,15 +23,17 @@ interface FormData {
   questions: QuestionWithId[]
 }
 
+const initialFormData: FormData = {
+  title: "",
+  description: "",
+  questions: [],
+}
+
 const CreateForm = () => {
   const [createForm, { isLoading, error: submitError }] =
     useCreateFormMutation()
 
-  const [formData, setFormData] = useState<FormData>({
-    title: "",
-    description: "",
-    questions: [],
-  })
+  const [formData, setFormData] = useState<FormData>(initialFormData)
   const [hasErrors, setHasErrors] = useState(false)
 
   const validationErrors = useMemo(() => {
@@ -124,14 +127,13 @@ const CreateForm = () => {
     try {
       await createForm(data).unwrap()
 
+      showToast.success("Form created successfully!")
+
       // Reset form
-      setFormData({
-        title: "",
-        description: "",
-        questions: [],
-      })
+      setFormData(initialFormData)
     } catch (error) {
       console.error("Error creating form:", error)
+      showToast.error("Failed to create form")
     }
   }
 

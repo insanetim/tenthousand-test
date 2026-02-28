@@ -2,6 +2,7 @@ import { ApiProvider } from "@reduxjs/toolkit/query/react"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import { Route, BrowserRouter as Router, Routes } from "react-router"
+import { Toaster } from "sonner"
 import { api } from "./api/baseApi.ts"
 import App from "./App.tsx"
 import "./index.css"
@@ -17,6 +18,11 @@ createRoot(document.getElementById("root")!).render(
           />
         </Routes>
       </Router>
+      <Toaster
+        position="top-right"
+        richColors
+        closeButton
+      />
     </ApiProvider>
   </StrictMode>
 )

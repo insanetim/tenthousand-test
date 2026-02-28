@@ -31,7 +31,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({
         </Button>
         <Button
           to={`/forms/${id}/responses`}
-          variant="secondary"
+          color="secondary"
         >
           <FileText size={16} />
           View Responses
