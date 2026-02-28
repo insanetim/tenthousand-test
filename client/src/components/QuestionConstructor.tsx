@@ -119,7 +119,7 @@ const QuestionConstructor = ({
               onChange={newTitle =>
                 onChange({ ...questionData, title: newTitle })
               }
-              placeholder="Enter question title"
+              placeholder="Enter question"
             />
           </div>
 

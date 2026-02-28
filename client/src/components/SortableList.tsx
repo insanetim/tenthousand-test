@@ -1,5 +1,4 @@
 import { GripVertical, Trash2 } from "lucide-react"
-import { memo } from "react"
 import { ReactSortable } from "react-sortablejs"
 import Button from "./UI/Button"
 
@@ -9,7 +8,7 @@ type SortableItem = {
 
 interface SortableListProps<T extends SortableItem> {
   list: T[]
-  setList: React.Dispatch<React.SetStateAction<T[]>>
+  setList: (list: T[]) => void
   children: React.ReactNode
 }
 
@@ -35,7 +34,7 @@ interface SortableListItemProps {
   onRemove?: () => void
 }
 
-SortableList.Item = memo(({ children, onRemove }: SortableListItemProps) => {
+SortableList.Item = ({ children, onRemove }: SortableListItemProps) => {
   return (
     <div className="flex items-start">
       <div className="handler cursor-move mr-2 p-2 flex-none">
@@ -53,6 +52,6 @@ SortableList.Item = memo(({ children, onRemove }: SortableListItemProps) => {
       )}
     </div>
   )
-})
+}
 
 export default SortableList

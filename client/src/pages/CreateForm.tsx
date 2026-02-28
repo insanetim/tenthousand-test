@@ -15,83 +15,109 @@ import {
 } from "../services/validation"
 import type { QuestionWithId } from "../types"
 
+interface FormData {
+  title: string
+  description: string
+  questions: QuestionWithId[]
+}
+
 const CreateForm = () => {
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [errors, setErrors] = useState<string[]>([])
-  const [questions, setQuestions] = useState<QuestionWithId[]>([])
+  const [formData, setFormData] = useState<FormData>({
+    title: "",
+    description: "",
+    questions: [],
+  })
+  const [hasErrors, setHasErrors] = useState(false)
 
   const validationErrors = useMemo(() => {
-    if (errors.length === 0) return []
+    if (!hasErrors) return []
 
-    const formData: CreateFormDto = {
-      title: title.trim(),
-      description: description.trim() || undefined,
-      questions: questions.map(({ title, type, options, required }) => ({
-        title,
-        type,
-        options,
-        required,
-      })),
+    const data: CreateFormDto = {
+      title: formData.title.trim(),
+      description: formData.description.trim(),
+      questions: formData.questions.map(
+        ({ title, type, options, required }) => ({
+          title,
+          type,
+          options,
+          required,
+        })
+      ),
     }
-    return formatValidationErrors(validateCreateForm(formData))
-  }, [title, description, questions, errors.length])
+
+    return formatValidationErrors(validateCreateForm(data))
+  }, [hasErrors, formData])
+
+  const updateFormData = <T extends keyof FormData>(
+    key: T,
+    value: FormData[T]
+  ) => {
+    setFormData(prev => ({ ...prev, [key]: value }))
+  }
 
   const addNewQuestion = () => {
     const newQuestion: QuestionWithId = {
-      id: nanoid(),
-      title: `Question ${questions.length + 1}`,
+      id: nanoid(5),
+      title: "",
       type: QuestionType.TEXT,
       required: false,
     }
-    const newQuestions = [...questions, newQuestion]
-    setQuestions(newQuestions)
+    const questions = [...formData.questions, newQuestion]
+    updateFormData("questions", questions)
   }
 
   const updateQuestion = (id: string, updatedQuestion: QuestionWithId) => {
-    const newQuestions = questions.map(q =>
-      q.id === id ? { ...q, ...updatedQuestion } : q
+    const questions = formData.questions.map(q =>
+      q.id === id ? updatedQuestion : q
     )
-    setQuestions(newQuestions)
+    updateFormData("questions", questions)
   }
 
   const removeQuestion = (id: string) => {
-    const newQuestions = questions.filter(q => q.id !== id)
-    setQuestions(newQuestions)
+    const questions = formData.questions.filter(q => q.id !== id)
+    updateFormData("questions", questions)
+  }
+
+  const reorderQuestions = (questions: QuestionWithId[]) => {
+    updateFormData("questions", questions)
   }
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     // Prepare form data for validation
-    const formData: CreateFormDto = {
-      title: title.trim(),
-      description: description.trim() || undefined,
-      questions: questions.map(({ title, type, options, required }) => ({
-        title,
-        type,
-        options,
-        required,
-      })),
+    const data: CreateFormDto = {
+      title: formData.title.trim(),
+      description: formData.description.trim(),
+      questions: formData.questions.map(
+        ({ title, type, options, required }) => ({
+          title,
+          type,
+          options,
+          required,
+        })
+      ),
     }
 
     // Validate form
-    const validationErrors = validateCreateForm(formData)
+    const validationErrors = validateCreateForm(data)
 
     if (validationErrors.length > 0) {
-      setErrors(formatValidationErrors(validationErrors))
+      setHasErrors(true)
       return
     }
 
-    setErrors([])
+    setHasErrors(false)
 
     // TODO: Submit form to server
-    console.log("Form submitted:", formData)
+    console.log("Form submitted:", data)
 
     // Reset form
-    setTitle("")
-    setDescription("")
-    setQuestions([])
+    setFormData({
+      title: "",
+      description: "",
+      questions: [],
+    })
   }
 
   return (
@@ -107,33 +133,23 @@ const CreateForm = () => {
         onSubmit={handleSubmit}
       >
         <div>
-          <label
-            htmlFor="title"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Title*
-          </label>
           <FormField
             id="title"
-            value={title}
-            onChange={setTitle}
+            value={formData.title}
+            onChange={e => updateFormData("title", e.target.value)}
             hasError={validationErrors.some(error => error.includes("title"))}
             placeholder="Enter form title"
+            labelText="Title*"
           />
         </div>
 
         <div>
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Description
-          </label>
           <FormField
             id="description"
-            value={description}
-            onChange={setDescription}
+            value={formData.description}
+            onChange={e => updateFormData("description", e.target.value)}
             placeholder="Enter form description (optional)"
+            labelText="Description"
           />
         </div>
 
@@ -149,12 +165,12 @@ const CreateForm = () => {
             </Button>
           </div>
 
-          {questions.length > 0 ? (
+          {formData.questions.length > 0 ? (
             <SortableList
-              list={questions}
-              setList={setQuestions}
+              list={formData.questions}
+              setList={reorderQuestions}
             >
-              {questions.map(question => (
+              {formData.questions.map(question => (
                 <SortableList.Item
                   key={question.id}
                   onRemove={() => removeQuestion(question.id)}
