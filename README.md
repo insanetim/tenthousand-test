@@ -2,6 +2,8 @@
 
 A monorepo application with a React frontend and GraphQL backend for form management.
 
+Project is developed according to the technical specifications located in the `docs` folder.
+
 ## Setup & Run
 
 ### 1. Install Dependencies
