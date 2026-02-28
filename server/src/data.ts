@@ -39,6 +39,7 @@ export const dataStore = {
             type: q.type || "TEXT",
             required: q.required || false,
           }
+          nextQuestionId++
 
           if (q.type === "MULTIPLE_CHOICE" || q.type === "CHECKBOX") {
             return {
@@ -54,7 +55,6 @@ export const dataStore = {
 
       forms.push(form)
       nextFormId++
-      nextQuestionId += dto.questions.length || 1
 
       return form
     } catch (error) {
