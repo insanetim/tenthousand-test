@@ -43,8 +43,8 @@ SortableList.Item = ({ children, onRemove }: SortableListItemProps) => {
       <div className="flex-1">{children}</div>
       {onRemove && (
         <Button
-          className="flex-none ml-2 p-2 hover:text-red-700 hover:bg-red-50"
-          variant="secondary"
+          className="flex-none ml-2 p-2 bg-gray-600 hover:text-red-700 hover:bg-red-50"
+          color="danger"
           onClick={onRemove}
         >
           <Trash2 className="w-4 h-4" />

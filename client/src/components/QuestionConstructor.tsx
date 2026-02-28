@@ -1,6 +1,7 @@
 import React from "react"
 import { QuestionType } from "../../../shared/types"
 import type { QuestionWithId } from "../types"
+import Button from "./UI/Button"
 import Checkbox from "./UI/Checkbox"
 import FormField from "./UI/FormField"
 import Select from "./UI/Select"
@@ -21,6 +22,10 @@ const QuestionConstructor = ({
   questionData,
   onQuestionUpdate,
 }: QuestionConstructorProps) => {
+  const withOptions =
+    questionData.type === QuestionType.MULTIPLE_CHOICE ||
+    questionData.type === QuestionType.CHECKBOX
+
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onQuestionUpdate({
       ...questionData,
@@ -29,10 +34,17 @@ const QuestionConstructor = ({
   }
 
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newType = e.target.value as QuestionType
+    const newOptions =
+      newType === QuestionType.MULTIPLE_CHOICE ||
+      newType === QuestionType.CHECKBOX
+        ? [""]
+        : undefined
+
     onQuestionUpdate({
       ...questionData,
-      type: e.target.value as QuestionType,
-      options: [],
+      type: newType,
+      options: newOptions,
     })
   }
 
@@ -44,10 +56,7 @@ const QuestionConstructor = ({
   }
 
   const addOption = () => {
-    if (
-      questionData.type === QuestionType.MULTIPLE_CHOICE ||
-      questionData.type === QuestionType.CHECKBOX
-    ) {
+    if (withOptions) {
       const newQuestionData = {
         ...questionData,
         options: [...(questionData.options || []), ""],
@@ -58,10 +67,7 @@ const QuestionConstructor = ({
   }
 
   const removeOption = (index: number) => {
-    if (
-      questionData.type === QuestionType.MULTIPLE_CHOICE ||
-      questionData.type === QuestionType.CHECKBOX
-    ) {
+    if (withOptions) {
       const newQuestionData = {
         ...questionData,
         options: questionData.options?.filter((_, i) => i !== index) || [],
@@ -72,10 +78,7 @@ const QuestionConstructor = ({
   }
 
   const updateOption = (index: number, value: string) => {
-    if (
-      questionData.type === QuestionType.MULTIPLE_CHOICE ||
-      questionData.type === QuestionType.CHECKBOX
-    ) {
+    if (withOptions) {
       const newOptions = [...(questionData.options || [])]
       newOptions[index] = value
       const newQuestionData = {
@@ -127,20 +130,19 @@ const QuestionConstructor = ({
         </div>
 
         {/* Options Management for Multiple Choice and Checkbox */}
-        {(questionData.type === QuestionType.MULTIPLE_CHOICE ||
-          questionData.type === QuestionType.CHECKBOX) && (
+        {withOptions && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="block text-sm font-medium text-gray-700">
+              <h4 className="block text-sm font-medium text-gray-700">
                 Options
-              </label>
-              <button
-                type="button"
+              </h4>
+              <Button
+                variant="outlined"
+                size="small"
                 onClick={addOption}
-                className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
               >
                 Add Option
-              </button>
+              </Button>
             </div>
 
             {(questionData.options || []).map((option, index) => (
@@ -154,32 +156,18 @@ const QuestionConstructor = ({
                   placeholder={`Option ${index + 1}`}
                 />
                 {(questionData.options || []).length > 1 && (
-                  <button
-                    type="button"
+                  <Button
+                    size="small"
+                    color="danger"
                     onClick={() => removeOption(index)}
-                    className="px-2 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
                   >
                     Remove
-                  </button>
+                  </Button>
                 )}
               </div>
             ))}
-
-            {(questionData.options || []).length === 0 && (
-              <p className="text-sm text-gray-500 italic">
-                No options added yet. Click "Add Option" to get started.
-              </p>
-            )}
           </div>
         )}
-      </div>
-
-      {/* Debug Info */}
-      <div className="mt-6 p-3 bg-gray-100 rounded text-sm">
-        <p className="font-medium">Current Question Data:</p>
-        <pre className="mt-1 text-xs">
-          {JSON.stringify(questionData, null, 2)}
-        </pre>
       </div>
     </div>
   )
