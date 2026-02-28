@@ -1,11 +1,10 @@
-import { Plus, Trash2 } from "lucide-react"
+import { Plus } from "lucide-react"
 import { nanoid } from "nanoid"
 import React, { useMemo, useState } from "react"
 import type { CreateFormDto } from "../../../shared/types"
 import { QuestionType } from "../../../shared/types"
 import QuestionConstructor from "../components/QuestionConstructor"
-import SortableList from "../components/SortableList/SortableList"
-import SortableListItem from "../components/SortableList/SortableListItem"
+import SortableList from "../components/SortableList"
 import Button from "../components/UI/Button"
 import ErrorAlert from "../components/UI/ErrorAlert"
 import FormField from "../components/UI/FormField"
@@ -104,8 +103,8 @@ const CreateForm = () => {
         </div>
       )}
       <form
-        onSubmit={handleSubmit}
         className="space-y-4"
+        onSubmit={handleSubmit}
       >
         <div>
           <label
@@ -142,9 +141,8 @@ const CreateForm = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-800">Questions</h2>
             <Button
-              type="button"
-              onClick={addNewQuestion}
               variant="outlined"
+              onClick={addNewQuestion}
             >
               <Plus className="w-4 h-4" />
               Add Question
@@ -157,24 +155,17 @@ const CreateForm = () => {
               setList={setQuestions}
             >
               {questions.map(question => (
-                <SortableListItem key={question.id}>
-                  <div className="flex-1">
-                    <QuestionConstructor
-                      questionData={question}
-                      onChange={updatedQuestion =>
-                        updateQuestion(question.id, updatedQuestion)
-                      }
-                    />
-                  </div>
-                  <Button
-                    type="button"
-                    onClick={() => removeQuestion(question.id)}
-                    className="ml-2 p-2 hover:text-red-700 hover:bg-red-50"
-                    variant="secondary"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </SortableListItem>
+                <SortableList.Item
+                  key={question.id}
+                  onRemove={() => removeQuestion(question.id)}
+                >
+                  <QuestionConstructor
+                    questionData={question}
+                    onChange={updatedQuestion =>
+                      updateQuestion(question.id, updatedQuestion)
+                    }
+                  />
+                </SortableList.Item>
               ))}
             </SortableList>
           ) : (
