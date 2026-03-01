@@ -2,6 +2,7 @@ import { useMemo } from "react"
 import { useParams } from "react-router"
 import type { Question } from "../../../shared/types"
 import { useGetFormQuery, useGetResponsesQuery } from "../api/formApiSlice"
+import FormTitle from "../components/FormTitle"
 import ResponsePreview from "../components/ResponsePreview"
 import ErrorAlert from "../components/UI/ErrorAlert"
 import Loading from "../components/UI/Loading"
@@ -51,21 +52,26 @@ const Responses = () => {
   } else if (form && responses) {
     content = (
       <>
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold">{form.title}</h3>
-          {form.description && (
-            <p className="text-gray-600 mt-2">{form.description}</p>
-          )}
-        </div>
-        <div className="space-y-4">
-          {responses.map(response => (
-            <ResponsePreview
-              key={response.id}
-              response={response}
-              questionsMap={questionsMap}
-            />
-          ))}
-        </div>
+        <FormTitle
+          className="mb-4"
+          title={form.title}
+          description={form.description}
+        />
+        {responses.length > 0 ? (
+          <div className="space-y-4">
+            {responses.map(response => (
+              <ResponsePreview
+                key={response.id}
+                response={response}
+                questionsMap={questionsMap}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500">
+            No responses submitted for this form yet.
+          </p>
+        )}
       </>
     )
   }

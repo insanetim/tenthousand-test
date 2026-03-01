@@ -1,5 +1,6 @@
 import { useParams } from "react-router"
 import { useGetFormQuery } from "../api/formApiSlice"
+import FormTitle from "../components/FormTitle"
 import SubmitResponseForm from "../components/SubmitResponseForm/SubmitResponseForm"
 import ErrorAlert from "../components/UI/ErrorAlert"
 import Loading from "../components/UI/Loading"
@@ -23,12 +24,11 @@ const FillForm = () => {
   } else if (form) {
     content = (
       <>
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold">{form.title}</h3>
-          {form.description && (
-            <p className="text-gray-600 mt-2">{form.description}</p>
-          )}
-        </div>
+        <FormTitle
+          className="mb-4"
+          title={form.title}
+          description={form.description}
+        />
         <SubmitResponseForm
           formId={form.id}
           questions={form.questions}
