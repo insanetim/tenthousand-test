@@ -2,8 +2,8 @@ import type { SubmitFormFieldProps } from "../../types"
 import Radio from "../UI/Radio"
 
 const MultipleChoiceField: React.FC<SubmitFormFieldProps> = ({
-  index,
   question,
+  questionIndex,
   currentValue,
   onAnswerChange,
   hasError,
@@ -11,7 +11,7 @@ const MultipleChoiceField: React.FC<SubmitFormFieldProps> = ({
   return (
     <div className="response-field">
       <h4 className="text-lg font-semibold mb-2">
-        {index + 1}. {question.title}
+        {questionIndex + 1}. {question.title}
       </h4>
       <div className="space-y-2">
         {question.options?.map((option, optionIndex) => (
@@ -22,7 +22,7 @@ const MultipleChoiceField: React.FC<SubmitFormFieldProps> = ({
             checked={
               typeof currentValue === "string" && currentValue === option
             }
-            onChange={e => onAnswerChange(index, e.target.value)}
+            onChange={e => onAnswerChange(questionIndex, e.target.value)}
             name={`question-${question.id}`}
             hasError={hasError}
           />

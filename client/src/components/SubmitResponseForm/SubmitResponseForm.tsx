@@ -1,17 +1,10 @@
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import { useNavigate } from "react-router"
-import {
-  type Answer,
-  type Question,
-  type QuestionType,
-  type SubmitResponseDto,
-} from "../../../../shared/types"
+import { type Question, type QuestionType } from "../../../../shared/types"
 import { useSubmitResponseMutation } from "../../api/formApiSlice"
+import { useSubmitResponse } from "../../hooks/useSubmitResponse"
 import showToast from "../../services/toast"
-import {
-  formatValidationErrors,
-  validateSubmitResponse,
-} from "../../services/validation"
+import { formatValidationErrors } from "../../services/validation"
 import type { SubmitFormFieldProps } from "../../types"
 import Button from "../UI/Button"
 import Card from "../UI/Card"
@@ -35,24 +28,11 @@ const SubmitResponseForm: React.FC<SubmitResponseFormProps> = ({
   const [submitResponse, { isLoading, error: submitError }] =
     useSubmitResponseMutation()
 
-  const [answers, setAnswers] = useState<Answer[]>(() => {
-    return questions.map(question => ({
-      questionId: question.id,
-      value: question.type === "CHECKBOX" ? [] : "",
-    }))
-  })
-  const [hasErrors, setHasErrors] = useState(false)
-
-  const validationErrors = useMemo(() => {
-    if (!hasErrors) return []
-
-    const data: SubmitResponseDto = {
+  const { answers, validationErrors, handleAnswerChange, validateFormData } =
+    useSubmitResponse({
       formId,
-      answers,
-    }
-
-    return validateSubmitResponse(data, questions)
-  }, [hasErrors, formId, answers, questions])
+      questions,
+    })
 
   const errorMessage = useMemo(() => {
     if (submitError) {
@@ -62,15 +42,7 @@ const SubmitResponseForm: React.FC<SubmitResponseFormProps> = ({
     }
   }, [submitError, validationErrors])
 
-  const handleAnswerChange = (index: number, value: string | string[]) => {
-    setAnswers(prev => {
-      const newAnswers = [...prev]
-      newAnswers[index].value = value
-      return newAnswers
-    })
-  }
-
-  const renderField = (question: Question, index: number) => {
+  const renderField = (question: Question, questionIndex: number) => {
     const componentsMap: Record<
       QuestionType,
       React.FC<SubmitFormFieldProps>
@@ -85,12 +57,12 @@ const SubmitResponseForm: React.FC<SubmitResponseFormProps> = ({
     return FieldComponent ? (
       <FieldComponent
         key={question.id}
-        index={index}
         question={question}
-        currentValue={answers[index].value}
+        questionIndex={questionIndex}
+        currentValue={answers[questionIndex].value}
         onAnswerChange={handleAnswerChange}
         hasError={validationErrors.some(error =>
-          error.field.includes(`answers[${index}]`)
+          error.field.includes(`answers[${questionIndex}]`)
         )}
       />
     ) : null
@@ -99,21 +71,9 @@ const SubmitResponseForm: React.FC<SubmitResponseFormProps> = ({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    // Prepare form data for validation
-    const data: SubmitResponseDto = {
-      formId,
-      answers,
-    }
+    const data = validateFormData()
 
-    // Validate form
-    const validationErrors = validateSubmitResponse(data, questions)
-
-    if (validationErrors.length > 0) {
-      setHasErrors(true)
-      return
-    }
-
-    setHasErrors(false)
+    if (!data) return
 
     try {
       await submitResponse(data).unwrap()

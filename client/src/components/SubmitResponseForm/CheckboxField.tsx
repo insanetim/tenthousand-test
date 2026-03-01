@@ -2,8 +2,8 @@ import type { SubmitFormFieldProps } from "../../types"
 import Checkbox from "../UI/Checkbox"
 
 const CheckboxField: React.FC<SubmitFormFieldProps> = ({
-  index,
   question,
+  questionIndex,
   currentValue,
   onAnswerChange,
   hasError,
@@ -20,13 +20,13 @@ const CheckboxField: React.FC<SubmitFormFieldProps> = ({
       newValues = currentValues.filter(val => val !== option)
     }
 
-    onAnswerChange(index, newValues)
+    onAnswerChange(questionIndex, newValues)
   }
 
   return (
     <div className="response-field">
       <h4 className="text-lg font-semibold mb-2">
-        {index + 1}. {question.title}
+        {questionIndex + 1}. {question.title}
       </h4>
       <div className="space-y-2">
         {question.options?.map((option, optionIndex) => (
