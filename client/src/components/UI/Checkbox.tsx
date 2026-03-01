@@ -8,6 +8,7 @@ interface CheckboxProps {
   disabled?: boolean
   className?: string
   id?: string
+  hasError?: boolean
 }
 
 const Checkbox: React.FC<CheckboxProps> = ({
@@ -17,6 +18,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   disabled = false,
   className = "",
   id,
+  hasError = false,
 }) => {
   const [generatedId] = useState(
     () =>
@@ -26,7 +28,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   const checkboxId = id || generatedId
 
   const checkboxClasses = twMerge(
-    "w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:ring-offset-2 transition-colors",
+    "w-4 h-4 text-blue-600 bg-white border-gray-300 rounded transition-colors",
     disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
     className
   )
@@ -37,7 +39,9 @@ const Checkbox: React.FC<CheckboxProps> = ({
   )
 
   return (
-    <div className="flex items-center">
+    <div
+      className={`flex items-center ${hasError ? "bg-red-50 p-2 rounded" : ""}`}
+    >
       <input
         type="checkbox"
         id={checkboxId}

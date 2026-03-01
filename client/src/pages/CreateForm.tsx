@@ -130,14 +130,10 @@ const CreateForm = () => {
       await createForm(data).unwrap()
 
       showToast.success("Form created successfully!")
-
-      // Reset form
-      setFormData(initialFormData)
-
       navigate("/")
     } catch (error) {
       console.error("Error creating form:", error)
-      showToast.error("Failed to create form")
+      showToast.error("Failed to create form.")
     }
   }
 

@@ -31,16 +31,16 @@ const Button: React.FC<ButtonProps> = ({
     switch (color) {
       case "secondary":
         return variant === "contained"
-          ? "bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500"
-          : "border-2 border-gray-600 text-gray-600 bg-transparent hover:bg-gray-50 focus:ring-gray-500"
+          ? "bg-gray-600 text-white hover:bg-gray-700"
+          : "border-2 border-gray-600 text-gray-600 bg-transparent hover:bg-gray-50"
       case "danger":
         return variant === "contained"
-          ? "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500"
-          : "border-2 border-red-600 text-red-600 bg-transparent hover:bg-red-50 focus:ring-red-500"
+          ? "bg-red-600 text-white hover:bg-red-700"
+          : "border-2 border-red-600 text-red-600 bg-transparent hover:bg-red-50"
       default:
         return variant === "contained"
-          ? "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"
-          : "border-2 border-blue-600 text-blue-600 bg-transparent hover:bg-blue-50 focus:ring-blue-500"
+          ? "bg-blue-600 text-white hover:bg-blue-700"
+          : "border-2 border-blue-600 text-blue-600 bg-transparent hover:bg-blue-50"
     }
   }
 
@@ -54,7 +54,7 @@ const Button: React.FC<ButtonProps> = ({
   }
 
   const baseClasses =
-    "flex items-center gap-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors font-medium cursor-pointer"
+    "flex items-center gap-2 rounded-md focus:outline-none transition-colors font-medium cursor-pointer"
   const widthClasses = fullWidth ? "w-full justify-center" : ""
   const disabledClasses = disabled ? "opacity-50 cursor-not-allowed" : ""
   const colorClasses = getColorClasses()

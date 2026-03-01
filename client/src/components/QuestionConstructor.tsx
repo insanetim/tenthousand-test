@@ -120,7 +120,7 @@ const QuestionConstructor = ({
           <div className="flex items-end">
             <div className="flex items-center">
               <Checkbox
-                id="required"
+                id={`q-${questionData.id}-required`}
                 label="Required"
                 checked={questionData.required}
                 onChange={handleRequiredChange}

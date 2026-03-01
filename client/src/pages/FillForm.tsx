@@ -1,5 +1,8 @@
 import { useParams } from "react-router"
 import { useGetFormQuery } from "../api/formApiSlice"
+import SubmitResponseForm from "../components/SubmitResponseForm/SubmitResponseForm"
+import ErrorAlert from "../components/UI/ErrorAlert"
+import Loading from "../components/UI/Loading"
 import Wrapper from "../components/UI/Wrapper"
 
 interface FillFormParams {
@@ -11,12 +14,33 @@ const FillForm = () => {
 
   const { data: form, isLoading, error } = useGetFormQuery({ id })
 
-  console.log({ form, isLoading, error })
+  let content
+
+  if (isLoading) {
+    content = <Loading />
+  } else if (error) {
+    content = <ErrorAlert errorMessage={error.message || "An error occurred"} />
+  } else if (form) {
+    content = (
+      <>
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold">{form.title}</h3>
+          {form.description && (
+            <p className="text-gray-600 mt-2">{form.description}</p>
+          )}
+        </div>
+        <SubmitResponseForm
+          formId={form.id}
+          questions={form.questions}
+        />
+      </>
+    )
+  }
 
   return (
     <Wrapper>
       <h1 className="text-2xl font-bold text-gray-800 mb-4">Fill Form</h1>
-      <p className="text-gray-600">Form filler functionality coming soon...</p>
+      {content}
     </Wrapper>
   )
 }

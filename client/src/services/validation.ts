@@ -1,4 +1,8 @@
-import type { CreateFormDto } from "../../../shared/types"
+import type {
+  CreateFormDto,
+  Question,
+  SubmitResponseDto,
+} from "../../../shared/types"
 
 export interface ValidationError {
   field: string
@@ -52,6 +56,51 @@ export const validateCreateForm = (
           errors.push({
             field: `questions[${index}].options[${emptyOptionIndex}]`,
             message: `Option ${emptyOptionIndex + 1} in question ${index + 1} cannot be empty`,
+          })
+        }
+      }
+    }
+  })
+
+  return errors
+}
+
+export const validateSubmitResponse = (
+  formData: SubmitResponseDto,
+  questions: Question[]
+): ValidationError[] => {
+  const errors: ValidationError[] = []
+
+  // Check each required question has an answer
+  questions.forEach((question, questionIndex) => {
+    if (question.required) {
+      const answer = formData.answers.find(a => a.questionId === question.id)
+
+      if (!answer) {
+        errors.push({
+          field: `answers[${questionIndex}]`,
+          message: `Question ${questionIndex + 1} is required`,
+        })
+        return
+      }
+
+      // Check if answer is empty based on question type
+      const answerValue = answer.value
+
+      if (question.type === "CHECKBOX") {
+        // For checkbox, check if array is empty
+        if (Array.isArray(answerValue) && answerValue.length === 0) {
+          errors.push({
+            field: `answers[${questionIndex}]`,
+            message: `Question ${questionIndex + 1} requires at least one selection`,
+          })
+        }
+      } else {
+        // For other types, check if string is empty
+        if (typeof answerValue === "string" && !answerValue.trim()) {
+          errors.push({
+            field: `answers[${questionIndex}]`,
+            message: `Question ${questionIndex + 1} is required`,
           })
         }
       }

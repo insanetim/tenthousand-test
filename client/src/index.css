@@ -3,3 +3,15 @@
 body {
   @apply bg-gray-100;
 }
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--color-blue-600);
+}
+
+.response-field {
+  @apply p-4;
+  & + & {
+    @apply border-t border-gray-200;
+  }
+}
