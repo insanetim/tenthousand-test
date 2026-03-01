@@ -1,8 +1,6 @@
 import { Plus } from "lucide-react"
-import { nanoid } from "nanoid"
-import React, { useMemo, useState } from "react"
+import React, { useMemo } from "react"
 import { useNavigate } from "react-router"
-import type { CreateFormDto } from "../../../shared/types"
 import { useCreateFormMutation } from "../api/formApiSlice"
 import QuestionConstructor from "../components/QuestionConstructor"
 import SortableList from "../components/SortableList"
@@ -10,51 +8,25 @@ import Button from "../components/UI/Button"
 import ErrorAlert from "../components/UI/ErrorAlert"
 import FormField from "../components/UI/FormField"
 import Wrapper from "../components/UI/Wrapper"
+import { useCreateForm } from "../hooks/useCreateForm"
 import showToast from "../services/toast"
-import {
-  formatValidationErrors,
-  validateCreateForm,
-} from "../services/validation"
-import type { QuestionWithId } from "../types"
-
-interface FormData {
-  title: string
-  description: string
-  questions: QuestionWithId[]
-}
-
-const initialFormData: FormData = {
-  title: "",
-  description: "",
-  questions: [],
-}
+import { formatValidationErrors } from "../services/validation"
 
 const CreateForm = () => {
   const navigate = useNavigate()
   const [createForm, { isLoading, error: submitError }] =
     useCreateFormMutation()
 
-  const [formData, setFormData] = useState<FormData>(initialFormData)
-  const [hasErrors, setHasErrors] = useState(false)
-
-  const validationErrors = useMemo(() => {
-    if (!hasErrors) return []
-
-    const data: CreateFormDto = {
-      title: formData.title.trim(),
-      description: formData.description.trim(),
-      questions: formData.questions.map(
-        ({ title, type, options, required }) => ({
-          title,
-          type,
-          options,
-          required,
-        })
-      ),
-    }
-
-    return validateCreateForm(data)
-  }, [hasErrors, formData])
+  const {
+    formData,
+    validationErrors,
+    updateFormData,
+    addNewQuestion,
+    updateQuestion,
+    removeQuestion,
+    reorderQuestions,
+    validateFormData,
+  } = useCreateForm()
 
   const errorMessage = useMemo(() => {
     if (submitError) {
@@ -64,66 +36,12 @@ const CreateForm = () => {
     }
   }, [submitError, validationErrors])
 
-  const updateFormData = <T extends keyof FormData>(
-    key: T,
-    value: FormData[T]
-  ) => {
-    setFormData(prev => ({ ...prev, [key]: value }))
-  }
-
-  const addNewQuestion = () => {
-    const newQuestion: QuestionWithId = {
-      id: nanoid(5),
-      title: "",
-      type: "TEXT",
-      required: false,
-    }
-    const questions = [...formData.questions, newQuestion]
-    updateFormData("questions", questions)
-  }
-
-  const updateQuestion = (id: string, updatedQuestion: QuestionWithId) => {
-    const questions = formData.questions.map(q =>
-      q.id === id ? updatedQuestion : q
-    )
-    updateFormData("questions", questions)
-  }
-
-  const removeQuestion = (id: string) => {
-    const questions = formData.questions.filter(q => q.id !== id)
-    updateFormData("questions", questions)
-  }
-
-  const reorderQuestions = (questions: QuestionWithId[]) => {
-    updateFormData("questions", questions)
-  }
-
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    // Prepare form data for validation
-    const data: CreateFormDto = {
-      title: formData.title.trim(),
-      description: formData.description.trim(),
-      questions: formData.questions.map(
-        ({ title, type, options, required }) => ({
-          title,
-          type,
-          options,
-          required,
-        })
-      ),
-    }
+    const data = validateFormData()
 
-    // Validate form
-    const validationErrors = validateCreateForm(data)
-
-    if (validationErrors.length > 0) {
-      setHasErrors(true)
-      return
-    }
-
-    setHasErrors(false)
+    if (!data) return
 
     try {
       await createForm(data).unwrap()
