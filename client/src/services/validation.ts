@@ -51,13 +51,14 @@ export const validateCreateForm = (
         })
       } else {
         // Check for empty options
-        const emptyOptionIndex = options.findIndex(option => !option.trim())
-        if (emptyOptionIndex !== -1) {
-          errors.push({
-            field: `questions[${index}].options[${emptyOptionIndex}]`,
-            message: `Option ${emptyOptionIndex + 1} in question ${index + 1} cannot be empty`,
-          })
-        }
+        options.forEach((option, optionIndex) => {
+          if (!option.trim()) {
+            errors.push({
+              field: `questions[${index}].options[${optionIndex}]`,
+              message: `Option ${optionIndex + 1} in question ${index + 1} cannot be empty`,
+            })
+          }
+        })
       }
     }
   })

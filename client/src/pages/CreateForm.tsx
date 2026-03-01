@@ -54,14 +54,14 @@ const CreateForm = () => {
       ),
     }
 
-    return formatValidationErrors(validateCreateForm(data))
+    return validateCreateForm(data)
   }, [hasErrors, formData])
 
   const errorMessage = useMemo(() => {
     if (submitError) {
       return submitError.message
     } else if (validationErrors.length > 0) {
-      return validationErrors
+      return formatValidationErrors(validationErrors)
     }
   }, [submitError, validationErrors])
 
@@ -154,7 +154,7 @@ const CreateForm = () => {
             id="title"
             value={formData.title}
             onChange={e => updateFormData("title", e.target.value)}
-            hasError={validationErrors.some(error => error.includes("title"))}
+            hasError={validationErrors.some(error => error.field === "title")}
             placeholder="Enter form title"
             labelText="Title*"
           />
@@ -187,7 +187,7 @@ const CreateForm = () => {
               list={formData.questions}
               setList={reorderQuestions}
             >
-              {formData.questions.map(question => (
+              {formData.questions.map((question, index) => (
                 <SortableList.Item
                   key={question.id}
                   onRemove={() => removeQuestion(question.id)}
@@ -197,6 +197,8 @@ const CreateForm = () => {
                     onQuestionUpdate={updatedQuestion =>
                       updateQuestion(question.id, updatedQuestion)
                     }
+                    validationErrors={validationErrors}
+                    questionIndex={index}
                   />
                 </SortableList.Item>
               ))}

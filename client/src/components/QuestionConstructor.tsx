@@ -1,5 +1,6 @@
 import React from "react"
 import { QuestionType } from "../../../shared/types"
+import type { ValidationError } from "../services/validation"
 import type { QuestionWithId } from "../types"
 import Button from "./UI/Button"
 import Checkbox from "./UI/Checkbox"
@@ -9,6 +10,8 @@ import Select from "./UI/Select"
 interface QuestionConstructorProps {
   questionData: QuestionWithId
   onQuestionUpdate: (question: QuestionWithId) => void
+  validationErrors?: ValidationError[]
+  questionIndex?: number
 }
 
 const TYPE_OPTIONS = [
@@ -21,6 +24,8 @@ const TYPE_OPTIONS = [
 const QuestionConstructor = ({
   questionData,
   onQuestionUpdate,
+  validationErrors,
+  questionIndex = 0,
 }: QuestionConstructorProps) => {
   const withOptions =
     questionData.type === QuestionType.MULTIPLE_CHOICE ||
@@ -102,6 +107,9 @@ const QuestionConstructor = ({
               onChange={handleTitleChange}
               placeholder="Enter question"
               labelText="Question Title"
+              hasError={validationErrors?.some(error =>
+                error.field.includes(`questions[${questionIndex}].title`)
+              )}
             />
           </div>
 
@@ -154,6 +162,11 @@ const QuestionConstructor = ({
                   value={option}
                   onChange={e => updateOption(index, e.target.value)}
                   placeholder={`Option ${index + 1}`}
+                  hasError={validationErrors?.some(error =>
+                    error.field.includes(
+                      `questions[${questionIndex}].options[${index}]`
+                    )
+                  )}
                 />
                 {(questionData.options || []).length > 1 && (
                   <Button
