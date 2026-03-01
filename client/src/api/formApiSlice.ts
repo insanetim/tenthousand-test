@@ -34,7 +34,7 @@ const formApiSlice = api
   })
   .injectEndpoints({
     endpoints: builder => ({
-      getForms: builder.query<GetFormsResponse, void>({
+      getForms: builder.query<Form[], void>({
         providesTags: ["Forms"],
         query: () => ({
           document: gql`
@@ -55,12 +55,11 @@ const formApiSlice = api
             }
           `,
         }),
-        transformResponse: (response: GetFormsResponse) => ({
-          forms: [...response.forms].sort(
+        transformResponse: (response: GetFormsResponse) =>
+          [...response.forms].sort(
             (a, b) =>
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           ),
-        }),
       }),
       getForm: builder.query<Form, { id: string }>({
         providesTags: (_result, _error, { id }) => [{ type: "Form", id }],
@@ -86,7 +85,7 @@ const formApiSlice = api
         }),
         transformResponse: (response: GetFormResponse) => response.form,
       }),
-      getResponses: builder.query<GetResponsesResponse, { formId: string }>({
+      getResponses: builder.query<Response[], { formId: string }>({
         providesTags: (_result, _error, { formId }) => [
           { type: "Responses", id: formId },
         ],
@@ -106,13 +105,12 @@ const formApiSlice = api
           `,
           variables: { formId },
         }),
-        transformResponse: (response: GetResponsesResponse) => ({
-          responses: [...response.responses].sort(
+        transformResponse: (response: GetResponsesResponse) =>
+          [...response.responses].sort(
             (a, b) =>
               new Date(b.submittedAt).getTime() -
               new Date(a.submittedAt).getTime()
           ),
-        }),
       }),
       createForm: builder.mutation<CreateFormResponse, CreateFormDto>({
         invalidatesTags: ["Forms"],

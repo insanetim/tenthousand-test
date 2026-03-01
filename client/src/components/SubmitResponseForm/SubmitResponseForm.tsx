@@ -14,6 +14,7 @@ import {
 } from "../../services/validation"
 import type { SubmitFormFieldProps } from "../../types"
 import Button from "../UI/Button"
+import Card from "../UI/Card"
 import ErrorAlert from "../UI/ErrorAlert"
 import CheckboxField from "./CheckboxField"
 import DateField from "./DateField"
@@ -135,9 +136,7 @@ const SubmitResponseForm: React.FC<SubmitResponseFormProps> = ({
         className="space-y-4"
         onSubmit={handleSubmit}
       >
-        <div className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm">
-          {questions.map(renderField)}
-        </div>
+        <Card>{questions.map(renderField)}</Card>
         <div className="pt-4">
           <Button
             type="submit"

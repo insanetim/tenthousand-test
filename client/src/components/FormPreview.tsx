@@ -1,6 +1,7 @@
 import { Eye, FileText } from "lucide-react"
 import { formatDateWithTime } from "../services/format"
 import Button from "./UI/Button"
+import Card from "./UI/Card"
 
 interface FormPreviewProps {
   id: string
@@ -16,7 +17,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({
   createdAt,
 }) => {
   return (
-    <div className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm">
+    <Card>
       <div className="flex items-start gap-3 mb-3">
         <FileText
           className="text-blue-500 mt-1"
@@ -43,7 +44,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({
           View Responses
         </Button>
       </div>
-    </div>
+    </Card>
   )
 }
 

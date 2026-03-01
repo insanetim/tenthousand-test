@@ -7,7 +7,7 @@ import Loading from "../components/UI/Loading"
 import Wrapper from "../components/UI/Wrapper"
 
 const Homepage = () => {
-  const { data, isLoading, error } = useGetFormsQuery()
+  const { data: forms, isLoading, error } = useGetFormsQuery()
 
   let content
 
@@ -15,14 +15,14 @@ const Homepage = () => {
     content = <Loading />
   } else if (error) {
     content = <ErrorAlert errorMessage={error.message || "An error occurred"} />
-  } else if (data?.forms.length === 0) {
+  } else if (forms?.length === 0) {
     content = (
       <p className="text-gray-500">No forms found. Create your first form!</p>
     )
   } else {
     content = (
       <div className="space-y-4">
-        {data?.forms.map(form => (
+        {forms?.map(form => (
           <FormPreview
             key={form.id}
             id={form.id}

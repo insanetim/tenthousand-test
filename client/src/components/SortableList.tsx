@@ -19,7 +19,7 @@ const SortableList = <T extends SortableItem>({
 }: SortableListProps<T>) => {
   return (
     <ReactSortable
-      className="flex flex-col gap-2"
+      className="flex flex-col gap-3"
       list={list}
       setList={setList}
       handle=".handler"

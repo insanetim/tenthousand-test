@@ -3,6 +3,7 @@ import { QuestionType } from "../../../shared/types"
 import type { ValidationError } from "../services/validation"
 import type { QuestionWithId } from "../types"
 import Button from "./UI/Button"
+import Card from "./UI/Card"
 import Checkbox from "./UI/Checkbox"
 import FormField from "./UI/FormField"
 import Select from "./UI/Select"
@@ -96,7 +97,7 @@ const QuestionConstructor = ({
   }
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
+    <Card>
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Title Field */}
@@ -182,7 +183,7 @@ const QuestionConstructor = ({
           </div>
         )}
       </div>
-    </div>
+    </Card>
   )
 }
 

@@ -23,7 +23,7 @@ const FormField: React.FC<FormFieldProps> = ({
   className = "",
 }) => {
   const baseClasses =
-    "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+    "w-full px-3 py-2 border rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
   const errorClasses = "border-red-500 focus:ring-red-500"
   const normalClasses = "border-gray-300"
 
