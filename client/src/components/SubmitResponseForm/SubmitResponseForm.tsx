@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react"
 import { useNavigate } from "react-router"
 import {
-  QuestionType,
   type Answer,
   type Question,
+  type QuestionType,
   type SubmitResponseDto,
 } from "../../../../shared/types"
 import { useSubmitResponseMutation } from "../../api/formApiSlice"
@@ -37,7 +37,7 @@ const SubmitResponseForm: React.FC<SubmitResponseFormProps> = ({
   const [answers, setAnswers] = useState<Answer[]>(() => {
     return questions.map(question => ({
       questionId: question.id,
-      value: question.type === QuestionType.CHECKBOX ? [] : "",
+      value: question.type === "CHECKBOX" ? [] : "",
     }))
   })
   const [hasErrors, setHasErrors] = useState(false)
@@ -74,10 +74,10 @@ const SubmitResponseForm: React.FC<SubmitResponseFormProps> = ({
       QuestionType,
       React.FC<SubmitFormFieldProps>
     > = {
-      [QuestionType.TEXT]: TextField,
-      [QuestionType.MULTIPLE_CHOICE]: MultipleChoiceField,
-      [QuestionType.CHECKBOX]: CheckboxField,
-      [QuestionType.DATE]: DateField,
+      TEXT: TextField,
+      MULTIPLE_CHOICE: MultipleChoiceField,
+      CHECKBOX: CheckboxField,
+      DATE: DateField,
     }
     const FieldComponent = componentsMap[question.type]
 

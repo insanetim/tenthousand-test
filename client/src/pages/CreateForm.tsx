@@ -3,7 +3,6 @@ import { nanoid } from "nanoid"
 import React, { useMemo, useState } from "react"
 import { useNavigate } from "react-router"
 import type { CreateFormDto } from "../../../shared/types"
-import { QuestionType } from "../../../shared/types"
 import { useCreateFormMutation } from "../api/formApiSlice"
 import QuestionConstructor from "../components/QuestionConstructor"
 import SortableList from "../components/SortableList"
@@ -76,7 +75,7 @@ const CreateForm = () => {
     const newQuestion: QuestionWithId = {
       id: nanoid(5),
       title: "",
-      type: QuestionType.TEXT,
+      type: "TEXT",
       required: false,
     }
     const questions = [...formData.questions, newQuestion]

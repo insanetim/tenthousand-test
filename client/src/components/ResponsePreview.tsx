@@ -1,5 +1,4 @@
 import {
-  QuestionType,
   type Answer,
   type Question,
   type Response,
@@ -18,7 +17,7 @@ const ResponsePreview: React.FC<ResponsePreviewProps> = ({
 }) => {
   const formatAnswer = (answer: Answer, question: Question) => {
     if (!answer.value || answer.value.length === 0) return "N/A"
-    if (question.type === QuestionType.DATE) {
+    if (question.type === "DATE") {
       return formatDate(answer.value as string)
     }
     const value = Array.isArray(answer.value) ? answer.value : [answer.value]

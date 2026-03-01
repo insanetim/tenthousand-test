@@ -1,5 +1,5 @@
 import React from "react"
-import { QuestionType } from "../../../shared/types"
+import type { QuestionType } from "../../../shared/types"
 import type { ValidationError } from "../services/validation"
 import type { QuestionWithId } from "../types"
 import Button from "./UI/Button"
@@ -15,11 +15,11 @@ interface QuestionConstructorProps {
   questionIndex?: number
 }
 
-const TYPE_OPTIONS = [
-  { value: QuestionType.TEXT, label: "Text" },
-  { value: QuestionType.MULTIPLE_CHOICE, label: "Multiple Choice" },
-  { value: QuestionType.CHECKBOX, label: "Checkbox" },
-  { value: QuestionType.DATE, label: "Date" },
+const TYPE_OPTIONS: { value: QuestionType; label: string }[] = [
+  { value: "TEXT", label: "Text" },
+  { value: "MULTIPLE_CHOICE", label: "Multiple Choice" },
+  { value: "CHECKBOX", label: "Checkbox" },
+  { value: "DATE", label: "Date" },
 ]
 
 const QuestionConstructor = ({
@@ -29,8 +29,7 @@ const QuestionConstructor = ({
   questionIndex = 0,
 }: QuestionConstructorProps) => {
   const withOptions =
-    questionData.type === QuestionType.MULTIPLE_CHOICE ||
-    questionData.type === QuestionType.CHECKBOX
+    questionData.type === "MULTIPLE_CHOICE" || questionData.type === "CHECKBOX"
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onQuestionUpdate({
@@ -42,10 +41,7 @@ const QuestionConstructor = ({
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newType = e.target.value as QuestionType
     const newOptions =
-      newType === QuestionType.MULTIPLE_CHOICE ||
-      newType === QuestionType.CHECKBOX
-        ? [""]
-        : undefined
+      newType === "MULTIPLE_CHOICE" || newType === "CHECKBOX" ? [""] : undefined
 
     onQuestionUpdate({
       ...questionData,
