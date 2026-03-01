@@ -16,8 +16,8 @@ const initialFormData: FormData = {
   questions: [],
 }
 
-export const useCreateForm = () => {
-  const [formData, setFormData] = useState<FormData>(initialFormData)
+export const useCreateForm = (initData: FormData = initialFormData) => {
+  const [formData, setFormData] = useState<FormData>(initData)
   const [hasErrors, setHasErrors] = useState(false)
 
   const validationErrors = useMemo(() => {
@@ -91,7 +91,8 @@ export const useCreateForm = () => {
     const hasValidationErrors = validationErrors.length > 0
 
     setHasErrors(hasValidationErrors)
-    return hasValidationErrors ? false : data
+
+    return hasValidationErrors ? null : data
   }
 
   return {

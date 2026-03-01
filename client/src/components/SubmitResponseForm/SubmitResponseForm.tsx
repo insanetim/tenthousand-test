@@ -31,6 +31,7 @@ const SubmitResponseForm: React.FC<SubmitResponseFormProps> = ({
   questions,
 }) => {
   const navigate = useNavigate()
+
   const [submitResponse, { isLoading, error: submitError }] =
     useSubmitResponseMutation()
 

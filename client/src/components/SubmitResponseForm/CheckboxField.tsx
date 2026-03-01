@@ -9,17 +9,14 @@ const CheckboxField: React.FC<SubmitFormFieldProps> = ({
   hasError,
 }) => {
   const handleCheckboxChange = (option: string, checked: boolean) => {
-    // For checkboxes, we need to handle multiple selections
     const currentValues = Array.isArray(currentValue) ? currentValue : []
     let newValues: string[]
 
     if (checked) {
-      // Add option if not already present
       newValues = currentValues.includes(option)
         ? currentValues
         : [...currentValues, option]
     } else {
-      // Remove option
       newValues = currentValues.filter(val => val !== option)
     }
 
